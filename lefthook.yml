@@ -1,0 +1,32 @@
+# lefthook.yml
+colors:
+  red:   '#E6D8FF'
+  green: '#DFF8F4'
+
+# Printing the following message in the terminal
+# Reference: https://lefthook.dev/configuration/output.html
+output: [summary, failure, execution_out, execution]
+
+commit-msg:
+  parallel: true
+  commands:
+    validate-message:
+      run: ./.lefthook/commit-msg/validate-message.sh {1}
+    no-merge-commit:
+      run: ./.lefthook/commit-msg/no-merge-commit.sh {1}
+
+pre-push:
+  commands:
+    start:
+      priority: 1
+      run: echo "⏳  Running pre-push checks..."
+    install:
+      priority: 5
+      run: yarn --silent
+    build:
+      priority: 10
+      run: yarn build
+      fail_text: "❌  Build failed. Please make sure that the build is successful locally before pushing. Ignore the check with --no-verify"
+    done:
+      priority: 99
+      run: echo "✅  All pre-push checks completed."
